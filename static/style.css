@@ -260,3 +260,150 @@ textarea {
     page-break-after: avoid;
   }
 }
+
+/* --------------------------- */
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --border-radius: .5rem;
+  --color-dark: #2f2f2f;
+  --color-light: #fff;
+  --color-primary: #4B3F72;
+  --color-error: #ff494c;
+  --color-highlight: #FFFF00;
+  --font-family: sans-serif;
+  --height: 5rem;
+  --btn-width: 5rem;
+  --color-table: #f1f1f1;
+  --color-table-even: rgba(255, 255, 255, .1);
+}
+
+
+body {
+  background: var(--color-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+  min-height: 100vh;
+  color: var(--color-light);
+  font-family: var(--font-family);
+}
+
+#search-section form {
+  position: relative;
+  border-radius: var(--border-radius);
+  background-color: var(--color-primary);
+  margin: 1rem 0;
+}
+
+#search-section .error {
+  border: 4px dashed var(--color-error);
+}
+
+#search-section input, #search-section button {
+  height: var(--height);
+  font-family: var(--font-family);
+  border: 0;
+  color: var(--color-dark);
+  font-size: 1.8rem;
+}
+
+#search-section input[type="search"] {
+  position: relative;
+  width: 100%;
+  padding: 0 1.6rem;
+  border-radius: var(--border-radius);
+  appearance: none;
+  z-index: 1;
+  outline: 0;
+  background: var(--color-light);
+}
+
+#search-section button {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-weight: bold;
+  background: var(--color-brand);
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  color: var(--color-light);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+#search-section input:not(:placeholder-shown) {
+  border-radius: var(--border-radius) 0 0 var(--border-radius);
+  width: calc(100% - var(--btn-width));
+}
+
+#search-section input:not(:placeholder-shown) + button {
+  display: block;
+}
+
+#search-section label {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 0;
+  border: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+
+#result-section {
+  display: none;
+}
+
+#result-section table {
+  margin: 0 auto;
+  width: 50%;
+  border-collapse: collapse;
+  border: 1px solid var(--color-light);
+  padding: .5rem;
+}
+
+#result-section table td, #result-section table th {
+  border: 1px solid var(--color-light);
+  padding: .5rem;
+}
+
+#result-section table tr:nth-child(even){
+  background-color: var(--color-primary);
+}
+
+#pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 320px;
+  height: 42px;
+  background-color: var(--color-light);
+  margin: 0 auto 1rem auto;
+}
+
+#pagination button {
+  width: 30px;
+  height: 42px;
+  border: 0;
+  background-color: var(--color-light);
+  cursor: pointer;
+}
+
+#pagination button.active {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+}
+
+#pagination .pagination-button--bold {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+mark {
+  background-color: var(--color-highlight);
+}

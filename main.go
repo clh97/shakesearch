@@ -9,6 +9,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func main() {
@@ -40,15 +42,40 @@ type Searcher struct {
 	SuffixArray   *suffixarray.Index
 }
 
+type SearcherResult struct {
+	Page       int      `json:"page"`
+	PageSize   int      `json:"pageSize"`
+	Results    []string `json:"results"`
+	Quantity   int      `json:"quantity"`
+	TotalPages int      `json:"totalPages"`
+}
+
 func handleSearch(searcher Searcher) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		query, ok := r.URL.Query()["q"]
-		if !ok || len(query[0]) < 1 {
+		queries := r.URL.Query()
+
+		pageNumber, _ := strconv.Atoi(queries.Get("page"))
+
+		if pageNumber <= 0 {
+			pageNumber = 1
+		}
+
+		pageSize, _ := strconv.Atoi(queries.Get("size"))
+
+		if pageSize <= 0 {
+			pageSize = 10
+		}
+
+		searchQuery := queries.Get("q")
+
+		if len(searchQuery) < 1 {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("missing search query in URL params"))
 			return
 		}
-		results := searcher.Search(query[0])
+
+		results := searcher.Search(searchQuery, pageNumber, pageSize)
+
 		buf := &bytes.Buffer{}
 		enc := json.NewEncoder(buf)
 		err := enc.Encode(results)
@@ -72,11 +99,37 @@ func (s *Searcher) Load(filename string) error {
 	return nil
 }
 
-func (s *Searcher) Search(query string) []string {
-	idxs := s.SuffixArray.Lookup([]byte(query), -1)
+func (s *Searcher) Search(query string, page int, pageSize int) SearcherResult {
+	lowerQuery := strings.ToLower(query)
+	idxs := s.SuffixArray.Lookup([]byte(lowerQuery), -1)
 	results := []string{}
 	for _, idx := range idxs {
-		results = append(results, s.CompleteWorks[idx-250:idx+250])
+		start := idx - 250
+		if start < 0 {
+			start = 0
+		}
+		end := idx + 250
+		if end > len(s.CompleteWorks) {
+			end = len(s.CompleteWorks)
+		}
+		results = append(results, s.CompleteWorks[start:end])
 	}
-	return results
+	return s.paginate(results, page, pageSize)
+}
+
+func (s *Searcher) paginate(results []string, page int, pageSize int) (r SearcherResult) {
+	start := (page - 1) * pageSize
+	end := start + pageSize
+	if start > len(results) {
+		return r
+	}
+	if end > len(results) {
+		end = len(results)
+	}
+	r.Page = page
+	r.PageSize = pageSize
+	r.Results = results[start:end]
+	r.Quantity = len(r.Results)
+	r.TotalPages = len(results) / pageSize
+	return r
 }

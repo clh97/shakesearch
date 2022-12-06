@@ -9,18 +9,25 @@
 </head>
 
 <body>
-    <p>
-        <form id="form">
-            <label for="query">Query</label>
-            <input type="text" id="query" name="query">
-            <button type="submit">Search</button>
-        </form>
-    </p>
-    <p>
-        <table id="table">
-          <tbody id="table-body"></tbody>
-        </table>
-    </p>
+  <section id="search-section">
+    <form id="form">
+      <label for="query">Query</label>
+      <input type="search" id="query" name="query">
+      <button type="submit">Search</button>
+    </form>
+  </section>
+  <section id="result-section">
+    <div id="pagination">
+    </div>
+    <table id="table">
+      <thead>
+        <tr>
+          <td>Content</td>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </section>
   <script src="app.js"></script>
 </body>
 
