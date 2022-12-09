@@ -38,7 +38,12 @@ const Controller = {
 
     table.innerHTML = "";
 
-    if (results.length >= pageSize) {
+    if (query.length === 0) {
+      pagination.style.display = "none";
+      return;
+    }
+
+    if (quantity > pageSize) {
       pagination.style.display = "flex";
     } else {
       pagination.style.display = "none";
@@ -75,9 +80,6 @@ const Controller = {
     }
   },
 };
-
-const form = document.getElementById("form");
-form.addEventListener("submit", (ev) => Controller.search(ev, 1, 10));
 
 const appendToTable = (result, query) => {
   const table = document.getElementById("table-body");
@@ -122,12 +124,12 @@ const updatePagination = (page = 1, pageSize = 10, totalPages) => {
   pagination.appendChild(startButtonsContainer);
 
   for (
-    let i = page >= totalPages - 5 ? totalPages - 5 : page;
+    let i = page >= totalPages - 5 ? Math.abs(totalPages - 5) : page;
     i <= page + 5;
     i++
   ) {
-    if (i > totalPages) {
-      break;
+    if (i < 1 || i > totalPages) {
+      continue;
     }
     const pageButton = createPageButton(i, page, totalPages, pageSize);
     paginationItemsContainer.appendChild(pageButton);
@@ -164,3 +166,14 @@ const createPageButton = (text, page, totalPages, pageSize) => {
   });
   return pageButton;
 };
+
+const handleOnInput = (ev) => {
+  if (ev.target.value.length === 0) {
+    return;
+  }
+  Controller.search(ev, 1, 10);
+};
+
+const form = document.getElementById("form");
+form.addEventListener("submit", (ev) => Controller.search(ev, 1, 10));
+form.addEventListener("input", handleOnInput);
