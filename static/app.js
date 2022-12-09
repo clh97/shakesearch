@@ -86,8 +86,8 @@ const appendToTable = (result, query) => {
   const row = document.createElement("tr");
   const data = document.createElement("td");
 
-  const regex = new RegExp(query, "gi");
-  const highlighted = result.replace(regex, `<mark>${query}</mark>`);
+  const regex = new RegExp(`(${query})`, "gi");
+  const highlighted = result.replace(regex, `<mark>$1</mark>`);
   data.innerHTML = highlighted;
 
   row.appendChild(data);
