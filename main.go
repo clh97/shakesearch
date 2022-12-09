@@ -129,7 +129,7 @@ func (s *Searcher) paginate(results []string, page int, pageSize int) (r Searche
 	r.Page = page
 	r.PageSize = pageSize
 	r.Results = results[start:end]
-	r.Quantity = len(r.Results)
-	r.TotalPages = len(results) / pageSize
+	r.Quantity = len(results)
+	r.TotalPages = (len(results) / pageSize) + 1
 	return r
 }
