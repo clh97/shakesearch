@@ -357,11 +357,13 @@ body {
 
 #result-section {
   display: none;
+  width: 100%;
+  max-width: 1024px;
 }
 
 #result-section table {
   margin: 0 auto;
-  width: 50%;
+  width: 100%;
   border-collapse: collapse;
   border: 1px solid var(--color-light);
   padding: .5rem;
@@ -380,18 +382,37 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 320px;
+  min-width: 320px;
   height: 42px;
   background-color: var(--color-light);
   margin: 0 auto 1rem auto;
 }
 
-#pagination button {
-  width: 30px;
+#pagination .pagination__buttons {
+  display: flex;
+  flex-shrink: 1;
+  min-width: 80px;
+}
+
+#pagination .pagination__buttons button {
+  flex-grow: 1;
   height: 42px;
+}
+
+#pagination button {
   border: 0;
   background-color: var(--color-light);
   cursor: pointer;
+}
+
+#pagination .pagination__pages {
+  display: flex;
+  flex-grow: 1;
+}
+
+#pagination .pagination__pages button {
+  flex-grow: 1;
+  height: 42px;
 }
 
 #pagination button.active {

@@ -52,7 +52,27 @@ const Controller = {
     for (let result of results) {
       appendToTable(result, query);
     }
+
     updatePagination(page, pageSize, totalPages);
+
+    const prevButton = document.getElementById("prev");
+    const startButton = document.getElementById("start");
+    const nextButton = document.getElementById("next");
+    const endButton = document.getElementById("end");
+
+    if (page === 1) {
+      prevButton.disabled = true;
+      startButton.disabled = true;
+
+      nextButton.disabled = false;
+      endButton.disabled = false;
+    } else if (page === totalPages) {
+      prevButton.disabled = false;
+      startButton.disabled = false;
+
+      nextButton.disabled = true;
+      endButton.disabled = true;
+    }
   },
 };
 
@@ -76,7 +96,15 @@ const updatePagination = (page = 1, pageSize = 10, totalPages) => {
   const pagination = document.getElementById("pagination");
   pagination.innerHTML = "";
 
+  const startButtonsContainer = document.createElement("div");
+  const endButtonsContainer = document.createElement("div");
+  startButtonsContainer.classList.add("pagination__buttons");
+  endButtonsContainer.classList.add("pagination__buttons");
+  const paginationItemsContainer = document.createElement("div");
+  paginationItemsContainer.classList.add("pagination__pages");
+
   const start = document.createElement("button");
+  start.id = "start";
   start.innerHTML = "&laquo;";
   start.classList.add("pagination-button--bold");
   start.addEventListener("click", (ev) => {
@@ -84,40 +112,48 @@ const updatePagination = (page = 1, pageSize = 10, totalPages) => {
   });
   pagination.appendChild(start);
   const prev = document.createElement("button");
+  prev.id = "prev";
   prev.innerHTML = "&laquo;";
   prev.addEventListener("click", (ev) => {
     Controller.search(ev, page - 1, pageSize);
   });
-  pagination.appendChild(start);
-  pagination.appendChild(prev);
+  startButtonsContainer.appendChild(start);
+  startButtonsContainer.appendChild(prev);
+  pagination.appendChild(startButtonsContainer);
 
-  for (let i = page - 1 || 1; i < page + 5; i++) {
+  for (
+    let i = page >= totalPages - 5 ? totalPages - 5 : page;
+    i <= page + 5;
+    i++
+  ) {
     if (i > totalPages) {
-      return;
+      break;
     }
-    const pageButton = createPageButton(i, page, pageSize);
-    pagination.appendChild(pageButton);
+    const pageButton = createPageButton(i, page, totalPages, pageSize);
+    paginationItemsContainer.appendChild(pageButton);
   }
 
-  const pageButton = createPageButton(totalPages, page, pageSize);
-  pagination.appendChild(pageButton);
+  pagination.appendChild(paginationItemsContainer);
 
   const end = document.createElement("button");
+  end.id = "end";
   end.innerHTML = "&raquo;";
   end.classList.add("pagination-button--bold");
   end.addEventListener("click", (ev) => {
     Controller.search(ev, totalPages, pageSize);
   });
   const next = document.createElement("button");
+  next.id = "next";
   next.innerHTML = "&raquo;";
   next.addEventListener("click", (ev) => {
     Controller.search(ev, page + 1, pageSize);
   });
-  pagination.appendChild(next);
-  pagination.appendChild(end);
+  endButtonsContainer.appendChild(next);
+  endButtonsContainer.appendChild(end);
+  pagination.appendChild(endButtonsContainer);
 };
 
-const createPageButton = (text, page, pageSize) => {
+const createPageButton = (text, page, totalPages, pageSize) => {
   const pageButton = document.createElement("button");
   pageButton.innerHTML = text;
   if (text === page) {
